@@ -1,18 +1,11 @@
-const asyncHandler = require('express-async-handler')
-const multer = require('multer');
-const path = require('path');
-const Blog = require('../models/blogModel')
-const Comment = require('../models/commentsModel')
-const cloudinary = require('cloudinary').v2;
-const authenticate = require('../middleware/authenticate')
-
- 
-// Configuration 
-cloudinary.config({
-  cloud_name: "dir6akgf8",
-  api_key: "558841897122288",
-  api_secret: "DxV73zCbjvJl2kcgEbCLNMqTFKQ"
-});
+import asyncHandler from 'express-async-handler'
+import multer from 'multer'
+import path from 'path'
+import {Blog, validateBlog} from '../models/blogModel.js'
+import Comment from '../models/commentsModel.js'
+//import cloudinary from 'cloudinary').v2
+import authenticate from '../middleware/authenticate.js'
+import Like from '../models/likesModel.js'
 
 //CREATE STORAGE FOR IMAGE
  const storage = multer.diskStorage({
@@ -61,44 +54,47 @@ const setBlog = asyncHandler(async (req, res) => {
 
       //if blog not in db, add it
       if (!data) {
-          //create a new POST object using the POST model and req.body
+          //create a new BLOG object using the BLOG model and req.body
+          const image = req.file ? '/uploads/' + req.file.filename : null;
+
           const blog = await new Blog({
               title:req.body.title,
-              image: '/uploads/' + req.file.filename, // placeholder for now
+              image: image, // placeholder for now
               category: req.body.category,
               content: req.body.content,
           })
 
           // save this object to database
           blog.save((err, data)=>{
-              if(err) return res.json({Error: err});
+              if(err) throw new Error(err);
               return res.status(201).json(data);
           })
-      //if there's an error or the POST is in db, return a message         
+      //if there's an error or the BLOG is in db, return a message         
       }else{
-          if(err) return res.json({message:"Blog already exists"});
+          return res.status(403).json({message:"Blog already exists"});
       }
   })    
 });
 //Update Blogs
 const updateBlog = asyncHandler(async (req, res) => {
-  const blog = await Blog.findById(req.params.id)
-
-  if(!blog){
-    res.status(404)
-    return res.json({message:"Blog already exists"});
-    }
+  // if(req.userRole !== 'admin' && req.userId !== req.params.id){
+  //   res.status(403).json({error : "Unauthorised access. You can only update your own blog."});
+  // }
+ 
   const updatedBlog = await Blog.findByIdAndUpdate(req.params.id, req.body,{
     new : true,
   })
-  res.status(200).json(updatedBlog);
+  res.status(200).json({message : 'Blog updated successfully', updatedBlog});  
 });
 //Delete single Blog
 const deleteBlog = asyncHandler(async (req, res) => {
+  if(req.userRole !== 'admin'){
+    res.status(403).json({error : 'Unauthorised access. Reserved for admins'});
+  }
   const blog = await Blog.findById(req.params.id)
 
   if(!blog){
-    res.status(400)
+    res.status(204)
     return res.json({message:"Blog not found"});
   }
   await blog.remove()
@@ -109,6 +105,9 @@ const deleteBlog = asyncHandler(async (req, res) => {
 
 //Delete All Blogs
 const deleteBlogs = asyncHandler(async (req, res) => {
+  if(req.userRole !== 'admin'){
+    res.status(403).json({error : 'Unauthorised access. Reserved for admins'});
+  }
   const blog = await Blog.find()
   if(!blog){
     res.status(404).json({error : 'No blogs are found'})
@@ -118,11 +117,11 @@ const deleteBlogs = asyncHandler(async (req, res) => {
     });
  // await user.deleteMany()
   res.status(200).json({
-    blog,
+    message : 'All blogs are deleted'
   });
 });
           // ##  COMMENTS ###
-// --- ADD POST COMMENT ---
+// --- ADD BLOG COMMENT ---
 const setComment = asyncHandler(async (req, res) => {
  
   if(!req.body.text){
@@ -130,9 +129,9 @@ const setComment = asyncHandler(async (req, res) => {
     throw new Error("Please add the required comment details") 
 }
  
-  const comment = await new Comment({
+  const comment =  new Comment({
     blog:req.params.id,
-    user: req.user,
+    user: req.userId,
     text: req.body.text,
   })
 
@@ -149,8 +148,39 @@ const getComments = asyncHandler(async (req, res) => {
   res.status(200).json(comments);
 });
 
+// --- LIKES FUNCTIONALITY  ---
+// --- Like BLOG  ---
+const setLike = asyncHandler(async (req, res) => {
+  const blogId = req.params.id;
+  const userId = req.userId;
+  //console.log(userId);
+    const blog = await Blog.findById(blogId);
+  try {
+    if (!blog) {
+      return res.status(404).json({ error: 'Blog not found' });
+    }
 
-module.exports = {
+    // Check if the user has already liked the blog
+    if (blog.likes.includes(userId)) {
+      return res.status(400).json({ error: 'User has already liked this blog' });
+    }
+    blog.likes.push(userId);
+    await blog.save();
+
+    res.status(201).json({ success: true });
+  } catch (error) {
+    res.status(500).json(error);
+  }
+})
+
+//Get comments
+const getLikes = asyncHandler(async (req, res) => {
+  const likes = await Like.find()
+  console.log('likes');
+  res.status(200).json(likes);
+});
+
+export {
   getBlogs,
   getBlog,
   setBlog,
@@ -160,4 +190,6 @@ module.exports = {
   setComment,
   getComments,
   upload,
+  getLikes,
+  setLike,
 };

@@ -1,7 +1,7 @@
-const mongoose = require("mongoose");
-const Joi = require("@hapi/joi");
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
+import mongoose from "mongoose"
+import Joi from "@hapi/joi"
+import jwt from 'jsonwebtoken'
+import bcrypt from 'bcrypt'
 
 const userSchema = new mongoose.Schema({
   names: {
@@ -55,6 +55,7 @@ const validateUser = (user) => {
       .pattern(new RegExp("^[a-zA-Z0-9]{3,90}$"))
       .required(),
     email: Joi.string().email().required(),
+    role: Joi.string().required(),
   });
 
   return schema.validate(user);
@@ -62,4 +63,4 @@ const validateUser = (user) => {
 
 const User = mongoose.model("User", userSchema);
 
-module.exports = { User, validateUser };
+export { User, validateUser };

@@ -2,11 +2,13 @@
   "name": "myBrand",
   "version": "1.0.0",
   "description": "My brand",
+  "type": "module",
   "main": "server.js",
   "scripts": {
     "start": "node backend/server.js",
     "server": "nodemon backend/server.js",
-    "test": "nyc mocha --10000 './test/**/*.test.js'"    
+    "test": "nyc mocha --10000 --reporter=html --reporter=text ./node_modules/.bin/mocha './test/**/*.test.js'",
+    "coverage": "nyc report --reporter=text-lcov | coveralls"
   },
   "author": "Shema Aime Bayijahe",
   "license": "MIT",

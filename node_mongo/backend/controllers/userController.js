@@ -1,46 +1,27 @@
-const { schema } = require('@hapi/joi/lib/compile');
-const asyncHandler = require('express-async-handler')
-const cloudinary = require('cloudinary').v2;
-const {User,validateUser, } = require('../models/userModel')
-const authenticate = require('../middleware/authenticate');
-const bcrypt = require('bcrypt')
+import { schema } from '@hapi/joi/lib/compile.js'
+import asyncHandler from 'express-async-handler'
+//import cloudinary from 'cloudinary').v2;
+import {User,validateUser, } from '../models/userModel.js'
+import authenticate from '../middleware/authenticate.js'
+//const bcrypt = require('bcrypt')
 
-
-// CLOUDINARY Configuration 
-cloudinary.config({
-  cloud_name: "dir6akgf8",
-  api_key: "558841897122288",
-  api_secret: "DxV73zCbjvJl2kcgEbCLNMqTFKQ"
-});
-
-//SET PROFILE PICTURE
-const setProfilePicture = asyncHandler(async (req, res) => { 
-    // Save the image URL to your database for the user
-    const picture = req.picture;
-    if (!req.body.pictured) {
-      return res.status(400).json({
-        error: 'File field is missing in the request body'
-      });
-    }
-    
-    return res.json(req.pictured );
-  });
-//});
 
 //Get Single user
 const getUser = asyncHandler(async (req, res) => {
   try {
 		const user = await User.findOne({ _id: req.params.id })
-		res.send(user)
+		res.json(user)
 	} catch {
-		res.status(404)
-		res.send({ error: "User doesn't exist!" })
+		res.status(404).json({ error: "User doesn't exist!" })
 	}
 });
 
 //Get ALL users
 const getUsers = asyncHandler(async (req, res) => {
-  
+ // console.log(req.userRole);
+  if(req.userRole !== 'admin'){
+    res.status(401).json({error : 'Unauthorised access. Reserved for admins'});
+  }
   const users = await User.find()
   res.status(200).json(users);
 });
@@ -57,17 +38,22 @@ const setUser = asyncHandler(async (req, res) => {
       if (error) return res.status(500).send(error.message);
       if (existingUser) return res.status(409).json({error : 'Email already exists'});
      });
+     User.findOne({ username: req.body.username }, (error, existingUser) => {
+      if (error) return res.status(500).send(error.message);
+      if (existingUser) return res.status(409).json({error : 'Username already exists'});
+     });
      const user = new User({
         names : req.body.names,
         username : req.body.username,
         email : req.body.email,
         password : req.body.password,
+        role : req.body.role
       })
 
 user.save((err) => {
   if (err) {
     // Handle the error
-    res.status(401).json({error : "User not saved"});
+    res.status(400).json({error : "User not saved"});
 
   } else {
     // User credentials have been saved
@@ -78,13 +64,17 @@ user.save((err) => {
 
 //Update User
 const updateUser = asyncHandler(async (req, res) => {
+ 
   const user = await User.findById(req.params.id)
 
   if(!user){
     res.status(404)
     throw new Error("User not found")   
 }
-User.findOne({ email: req.body.email }, (error, existingUser) => {
+ if(req.userRole !== 'admin' && req.userId !== req.params.id){
+    res.status(401).json({error : "Unauthorised access. You can only update your own account."});
+  }
+User.findOne({ email: req.body.email } || {username: req.body.username}, (error, existingUser) => {
   if (error) return res.status(500).send(error.message);
   if (existingUser) return res.status(400).json({error : 'Email already exists'});
  });
@@ -96,15 +86,17 @@ if (error) {
   const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body,{
     new : true,
   })
-  res.status(200).json(updatedUser);
+  res.status(200).json({message : 'User updated successfully', updatedUser});
 });
 //Delete Single User
 const deleteUser = asyncHandler(async (req, res) => {
+  if(req.userRole !== 'admin' && req.userId !== req.params.id){
+    res.status(401).json({error : "Unauthorised access. You can only delete your own account."});
+  }
   const user = await User.findById(req.params.id)
 
   if(!user){
-    res.status(404)
-    console.log('User not found');
+    res.status(404).json({error : 'User not found'})
   }
   await user.remove()
   res.status(200).json({
@@ -114,6 +106,9 @@ const deleteUser = asyncHandler(async (req, res) => {
 
 //Delete All Users
 const deleteUsers = asyncHandler(async (req, res) => {
+  if(req.userRole !== 'admin'){
+    res.status(401).json({error : 'Unauthorised access. Reserved for admins'});
+  }
     const user = await User.find()
     if(!user){
       res.status(404)
@@ -128,13 +123,11 @@ const deleteUsers = asyncHandler(async (req, res) => {
     });
   });
 
-module.exports = {
+export {
   getUsers,
   getUser,
   setUser,
   updateUser,
   deleteUser,
   deleteUsers,
-  setProfilePicture,
-  //uploadOne,
 };

@@ -1,16 +1,16 @@
-const express = require("express");
+import express from "express"
 const router = express.Router();
-const {authenticate, authenticateUser }= require('../middleware/authenticate')
-const {
+import {authenticate, authenticateUser }from '../middleware/authenticate.js'
+import {
   getMessages,
   getMessage,
   setMessage,
   updateMessage,
   deleteMessage,
   deleteMessages,
-} = require("../controllers/messageController");
+} from "../controllers/messageController.js"
 
 router.route("/").get(authenticate, getMessages).post(setMessage).delete(authenticate,deleteMessages);
 router.route("/:id").put(authenticate, updateMessage).delete(authenticate, deleteMessage).get(authenticate, getMessage);
 
-module.exports = router;
+export default router

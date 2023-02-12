@@ -1,5 +1,5 @@
-const mongoose = require("mongoose");
-const Joi = require("@hapi/joi");
+import mongoose from "mongoose"
+import Joi from "@hapi/joi"
 
 const messageSchema = new mongoose.Schema({
   names: {
@@ -36,4 +36,4 @@ const validateMessage = (message) => {
 
 const Message = mongoose.model("Message", messageSchema);
 
-module.exports = { Message, validateMessage };
+export { Message, validateMessage };

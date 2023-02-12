@@ -1,26 +1,31 @@
-const { schema } = require('@hapi/joi/lib/compile');
-const asyncHandler = require('express-async-handler')
-//const axios = require('axios');
-const {Message,validateMessage} = require('../models/messageModel')
+import { schema } from '@hapi/joi/lib/compile.js'
+import asyncHandler from 'express-async-handler'
+import {Message,validateMessage} from '../models/messageModel.js'
 
-//Get Single user
+//Get Single message
 const getMessage = asyncHandler(async (req, res) => {
+  if(req.userRole !== 'admin' && req.userId !== req.params.id){
+    res.status(403).json({error : "Unauthorised access. You can only fetch your own message."});
+  }
   try {
 		const message = await Message.findOne({ _id: req.params.id })
-		res.send(message)
+		res.json(message)
 	} catch {
 		res.status(404)
-		res.send({ error: "Message doesn't exist!" })
+		res.json({ error: "Message doesn't exist!" })
 	}
 });
 
-//Get users
+//Get messages
 const getMessages = asyncHandler(async (req, res) => {
+  if(req.userRole !== 'admin'){
+    res.status(403).json({error : 'Unauthorised access. Reserved for admins'});
+  }
   const messages = await Message.find()
   res.status(200).json(messages);
 });
 
-//Set user
+//Send message
 const setMessage = asyncHandler(async (req, res) => {
      
      const { error } = validateMessage(req.body);
@@ -34,16 +39,17 @@ const setMessage = asyncHandler(async (req, res) => {
         email : req.body.email,
         content : req.body.content,
       })
-   
      res.status(201).json(message);
 });
-//Update Posts
+//Update message
 const updateMessage = asyncHandler(async (req, res) => {
+  if(req.userRole !== 'admin' && req.userId !== req.params.id){
+    res.status(401).json({error : "Unauthorised access. You can only update your own message."});
+  }
   const message = await Message.findById(req.params.id)
 
   if(!message){
-    res.status(404)
-    throw new Error("Message is not found")   
+    res.status(404).json("Message is not found")   
 }
 
   const updatedMessage = await Message.findByIdAndUpdate(req.params.id, req.body,{
@@ -53,6 +59,9 @@ const updateMessage = asyncHandler(async (req, res) => {
 });
 //Delete Single message
 const deleteMessage = asyncHandler(async (req, res) => {
+  if(req.userRole !== 'admin' && req.userId !== req.params.id){
+    res.status(403).json({error : "Unauthorised access. You can only delete your own message."});
+  }
   const message = await Message.findById(req.params.id)
 
   if(!message){
@@ -67,6 +76,9 @@ const deleteMessage = asyncHandler(async (req, res) => {
 
 //Delete All messages
 const deleteMessages = asyncHandler(async (req, res) => {
+  if(req.userRole !== 'admin'){
+    res.status(403).json({error : 'Unauthorised access. Reserved for admins'});
+  }
     const messages = await Message.find()
     if(!messages){
       res.status(404)
@@ -81,7 +93,7 @@ const deleteMessages = asyncHandler(async (req, res) => {
   });
 
 
-module.exports = {
+export {
   getMessages,
   getMessage,
   setMessage,

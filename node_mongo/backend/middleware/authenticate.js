@@ -1,9 +1,9 @@
-const jwt = require('jsonwebtoken');
-const asyncHandler = require('express-async-handler')
-const {User} = require('../models/userModel')
-const bcrypt = require('bcrypt')
+import jwt from 'jsonwebtoken'
+import asyncHandler from 'express-async-handler'
+import {User} from '../models/userModel.js'
+import bcrypt from 'bcrypt'
 
-const authenticate = (req, res, next) => {
+export const authenticate = (req, res, next) => {
   const rawToken = req.header('Authorization');
 
   if (!rawToken) {    
@@ -21,7 +21,7 @@ const authenticate = (req, res, next) => {
   }
 };
 
-const authenticateUser = asyncHandler(async (req, res) => {
+export const authenticateUser = asyncHandler(async (req, res) => {
   User.findOne({ email: req.body.email },async (err, user) => {
     if (err) return res.status(400).json(err);
     if (!user) return res.status(404).json({ message: 'User not found' });
@@ -38,4 +38,4 @@ const authenticateUser = asyncHandler(async (req, res) => {
   });
 })  
 
-module.exports = {authenticate, authenticateUser};
+export default {authenticate, authenticateUser};
