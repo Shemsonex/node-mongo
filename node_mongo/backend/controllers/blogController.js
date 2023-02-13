@@ -3,9 +3,29 @@ import multer from 'multer'
 import path from 'path'
 import {Blog, validateBlog} from '../models/blogModel.js'
 import Comment from '../models/commentsModel.js'
-//import cloudinary from 'cloudinary').v2
 import authenticate from '../middleware/authenticate.js'
 import Like from '../models/likesModel.js'
+import cloudinary from '../helpers/imageUpload.js'
+
+export const uploadImage = async (req, res) => {
+  const blog = req;
+  if(!blog){
+    return res
+      .status(401)
+      .json({ success: false, message: 'Error uploading Image!' });
+    }
+    // console.log(blog.file)
+
+    const result = await cloudinary.uploader.upload(req.file.path, {
+      // public_id: `${blog._id}_profile`,
+      width: 500,
+      height: 500,
+      crop: 'fill'
+    });
+
+    console.log(result);
+
+}
 
 //CREATE STORAGE FOR IMAGE
  const storage = multer.diskStorage({
@@ -48,8 +68,8 @@ const setBlog = asyncHandler(async (req, res) => {
           res.status(400)
           //res.send(req.body.title)
           throw new Error("Please add the required blog details") 
-    }
-   
+    }    
+
     Blog.findOne({ title: req.body.title }, async (err, data) => {
 
       //if blog not in db, add it
@@ -69,6 +89,8 @@ const setBlog = asyncHandler(async (req, res) => {
               if(err) throw new Error(err);
               return res.status(201).json(data);
           })
+
+          uploadImage(req, res)
       //if there's an error or the BLOG is in db, return a message         
       }else{
           return res.status(403).json({message:"Blog already exists"});

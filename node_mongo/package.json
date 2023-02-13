@@ -7,8 +7,8 @@
   "scripts": {
     "start": "node backend/server.js",
     "server": "nodemon backend/server.js",
-    "test": "nyc mocha --10000 './test/**/*.test.js'",
-    "coverage": "nyc --reporter=lcov --reporter=text --cache mocha ./test/**/*.test.js",
+    "test": "nyc --reporter=html --reporter=text mocha './test/**/*.test.js'",
+    "coverage": "nyc report --reporter=text-lcov | coveralls",
     "coveralls": "npm run coverage | coveralls"    
   },
   "author": "Shema Aime Bayijahe",
