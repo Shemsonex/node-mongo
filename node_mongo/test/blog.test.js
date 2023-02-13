@@ -27,7 +27,7 @@ describe('Blog API', async function ()  {
       describe('GET specific /blogs/:id', function() {
         this.timeout(30000)
         it('returns a specific blog by ID', function(done) {
-           request(app).get('/api/blogs/63e55aec249613d8ea41a040')
+           request(app).get('/api/blogs/63e9510bc122128f084b1b7b')
                
                 .expect(200)
                 .end(function(err, res) {
