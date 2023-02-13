@@ -27,8 +27,12 @@ jobs:
           # If you are using yarn, change the line below from "npm" to "yarn"
           pkg-manager: npm
       - run:
+          name: Install npm dependencies
+          command: npm install
+
+      - run:
           name: Run tests
-          command: npm test
+          command: npm run test
 
 workflows:
   # Below is the definition of your workflow.
