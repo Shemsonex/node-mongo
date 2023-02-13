@@ -28,6 +28,9 @@ jobs:
       - node/install-packages:
           # If you are using yarn, change the line below from "npm" to "yarn"
           pkg-manager: npm
+      - run: npm install
+      - run: npm run build
+      - run: npm run test:coverage
       - run:
           name: Install npm dependencies
           command: npm install
