@@ -31,6 +31,10 @@ const userSchema = new mongoose.Schema({
   picture: {
     type: Buffer,
   },
+  role: {
+    type: String,
+    required : true,
+  },
 });
 
 userSchema.pre('save', function(next) {
@@ -44,7 +48,7 @@ userSchema.pre('save', function(next) {
 });
 
 userSchema.methods.generateAuthToken = function() {
-  return jwt.sign({ _id: this._id }, 'secretkey');
+  return jwt.sign({ _id: this._id, role: this.role }, 'secretkey');
 };
 
 const validateUser = (user) => {
@@ -55,7 +59,7 @@ const validateUser = (user) => {
       .pattern(new RegExp("^[a-zA-Z0-9]{3,90}$"))
       .required(),
     email: Joi.string().email().required(),
-    role: Joi.string().required(),
+    role: Joi.string().alphanum().min(3).max(30).required(),
   });
 
   return schema.validate(user);

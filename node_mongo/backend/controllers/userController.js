@@ -18,7 +18,7 @@ const getUser = asyncHandler(async (req, res) => {
 
 //Get ALL users
 const getUsers = asyncHandler(async (req, res) => {
- // console.log(req.userRole);
+//  console.log(req.body);
   if(req.userRole !== 'admin'){
     res.status(401).json({error : 'Unauthorised access. Reserved for admins'});
   }
@@ -57,7 +57,7 @@ user.save((err) => {
 
   } else {
     // User credentials have been saved
-    res.status(201).json(user);
+    res.status(201).json({message: "User created successfully !", user});
   }
 });
 });

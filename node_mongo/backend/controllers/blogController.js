@@ -7,7 +7,26 @@ import authenticate from '../middleware/authenticate.js'
 import Like from '../models/likesModel.js'
 import cloudinary from '../helpers/imageUpload.js'
 
-export const uploadImage = async (req, res) => {
+// export const uploadImage = async (req, res) => {
+//   const blog = req;
+//   if(!blog){
+//     return res
+//       .status(401)
+//       .json({ success: false, message: 'Error uploading Image!' });
+//     }
+//     // console.log(blog.file)
+//     const result = await cloudinary.uploader.upload(req.file.path, {
+//       // public_id: `${blog._id}_profile`,
+//       width: 500,
+//       height: 500,
+//       crop: 'fill'
+//     });
+
+//     console.log(result);
+//     // updateBlogImage(req, res) ;
+// }
+
+const setImage = async (req, res) => {  
   const blog = req;
   if(!blog){
     return res
@@ -15,7 +34,6 @@ export const uploadImage = async (req, res) => {
       .json({ success: false, message: 'Error uploading Image!' });
     }
     // console.log(blog.file)
-
     const result = await cloudinary.uploader.upload(req.file.path, {
       // public_id: `${blog._id}_profile`,
       width: 500,
@@ -24,7 +42,22 @@ export const uploadImage = async (req, res) => {
     });
 
     console.log(result);
-
+  try{
+    // Saving the image link in the DB
+    const blogsAtStart = await Blog.find({})
+    const blogToUpdate = (blogsAtStart[blogsAtStart.length - 1].toJSON()._id).valueOf()
+    const blogUpdate = { image: result.url };
+    const updatedBlog = await Blog.findByIdAndUpdate(blogToUpdate, blogUpdate, {
+      new : true,
+    })
+    if(res.statusCode==200){
+       return res.status(200).json({message : 'Image Link saved successfully', updatedBlog}); 
+    }else{
+      console.log(res.statusCode)
+    }  
+  }catch (e){
+    console.log(e.message)
+  }
 }
 
 //CREATE STORAGE FOR IMAGE
@@ -75,11 +108,11 @@ const setBlog = asyncHandler(async (req, res) => {
       //if blog not in db, add it
       if (!data) {
           //create a new BLOG object using the BLOG model and req.body
-          const image = req.file ? '/uploads/' + req.file.filename : null;
+          // const image = req.file ? '/uploads/' + req.file.filename : null;
 
           const blog = await new Blog({
               title:req.body.title,
-              image: image, // placeholder for now
+              // image: image, // placeholder for now
               category: req.body.category,
               content: req.body.content,
           })
@@ -90,13 +123,15 @@ const setBlog = asyncHandler(async (req, res) => {
               return res.status(201).json(data);
           })
 
-          uploadImage(req, res)
+          // uploadImage(req, res)
       //if there's an error or the BLOG is in db, return a message         
       }else{
           return res.status(403).json({message:"Blog already exists"});
       }
   })    
 });
+
+
 //Update Blogs
 const updateBlog = asyncHandler(async (req, res) => {
   // if(req.userRole !== 'admin' && req.userId !== req.params.id){
@@ -108,8 +143,11 @@ const updateBlog = asyncHandler(async (req, res) => {
   })
   res.status(200).json({message : 'Blog updated successfully', updatedBlog});  
 });
+
+
 //Delete single Blog
 const deleteBlog = asyncHandler(async (req, res) => {
+  // console.log(req.userRole)
   if(req.userRole !== 'admin'){
     res.status(403).json({error : 'Unauthorised access. Reserved for admins'});
   }
@@ -119,7 +157,7 @@ const deleteBlog = asyncHandler(async (req, res) => {
     res.status(204)
     return res.json({message:"Blog not found"});
   }
-  await blog.remove()
+  await blog.deleteOne()
   res.status(200).json({
     id: req.params.id
   });
@@ -206,6 +244,7 @@ export {
   getBlogs,
   getBlog,
   setBlog,
+  setImage,
   updateBlog,
   deleteBlog,
   deleteBlogs,

@@ -14,7 +14,8 @@ export const authenticate = (req, res, next) => {
     const token = rawToken.split(' ')[1]
     const decoded = jwt.verify(token, 'secretkey');
     req.user = decoded._id;
-    //console.log(req.user)
+    req.userRole = decoded.role;
+    // console.log(decoded)
     next();
   } catch (error) {
     res.status(400).json({ error: 'Invalid token' });

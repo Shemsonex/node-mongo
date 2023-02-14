@@ -6,6 +6,7 @@ import {
   getBlogs,
   getBlog,
   setBlog,
+  setImage,
   updateBlog,
   deleteBlog,
   deleteBlogs,
@@ -16,8 +17,9 @@ import {
   setLike,
 } from "../controllers/blogController.js";
 
-router.route("/").get(getBlogs).post(upload.single('image'), setBlog).delete(deleteBlogs);
+router.route("/").get(getBlogs).post(setBlog).delete(deleteBlogs);
 router.route("/:id").put(authenticate, updateBlog).delete(authenticate, deleteBlog).get(getBlog);
+router.route("/:id/blogPicture").put(upload.single('image'), setImage);
 router.route("/:id/comments").get(authenticate,getComments).post(authenticate, setComment)
 router.route("/:id/likes").get(authenticate,getLikes).post(authenticate, setLike)
 
