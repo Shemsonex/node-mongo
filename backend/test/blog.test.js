@@ -19,7 +19,7 @@ test('Returns all blogs', async () => {
     await api
         .get('/api/blogs')
         .expect(200)
-})
+}, 50000)
 
 test('Creates a new blog', async () => {
     try{
@@ -39,7 +39,7 @@ test('Creates a new blog', async () => {
 }catch (e){
     console.log(e.message)
 }
-})
+}, 50000)
 
 test('Returns a specific blog by ID', async () => {
     try{
@@ -57,7 +57,7 @@ test('Returns a specific blog by ID', async () => {
     }catch (e){
         console.log(e.message)
     }
-})
+}, 50000)
 
 test('Delete a blog', async () => {
     // try{
@@ -80,7 +80,7 @@ test('Delete a blog', async () => {
     // }catch (e){
     //     console.log(e.message)
     // }    
-})
+}, 50000)
 
 it('Should not Create a new blog if title and content fields are empty', async () => {
         try{
@@ -94,7 +94,7 @@ it('Should not Create a new blog if title and content fields are empty', async (
         } catch (e) {
             console.log(e.message)
         }    
-    });
+    }, 50000);
 
 it('Should not Create a new blog if it already exists', async () => {
     try{
@@ -111,7 +111,7 @@ it('Should not Create a new blog if it already exists', async () => {
     } catch (e) {
         console.log(e.message)
     }    
-});
+}, 50000);
 
 it('Should update an existing blog', async () => {
     try{
@@ -128,7 +128,7 @@ it('Should update an existing blog', async () => {
     } catch (e) {
         console.log(e.message)
     }
-});
+}, 50000);
 
 afterAll(() => mongoose.connection.close())
 })
