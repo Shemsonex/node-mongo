@@ -6,7 +6,7 @@ import {errorHandler} from './middleware/errorMiddleware.js'
 const port = process.env.PORT || 5000;
 import connectDB from './config/db.js'
 import request from 'supertest'
-import userRoutes from "routes/userRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
 import blogRoutes from "./routes/blogRoutes.js";
 import messageRoutes from "./routes/messageRoutes.js";
 
