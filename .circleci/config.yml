@@ -1,7 +1,6 @@
 version: 2.1
 orbs:
-  browser-tools: circleci/browser-tools@1.2.3
-  coveralls: coveralls/coveralls@1.0.6 # coveralls orb
+  browser-tools: circleci/browser-tools@1.2.3  
 jobs:
   build:
     docker:
