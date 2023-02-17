@@ -8,9 +8,9 @@
     "start": "node backend/server.js",
     "server": "nodemon backend/server.js",
     "dev": "nodemon backend/server.js",
-    "test": "nyc node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage --verbose --runInBand --forceExit",
-    "coverage": "nyc npm run test",
-    "coveralls": "nyc report --reporter=text-lcov | coveralls"
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage --verbose --runInBand --forceExit",
+    "coverage": "npm run test",
+    "coveralls": "report --reporter=text-lcov | coveralls"
   },
   "author": "Shema Aime Bayijahe",
   "license": "MIT",
