@@ -88,7 +88,7 @@ it('Should update an existing message', async () => {
 }, 50000);
 
 test('Delete a message', async () => {
-    // try{
+    try{
         //get messages and parse the one you want to delete to JSON
         const messagesAtStart = await Message.find({})
         const messageToDelete = (messagesAtStart[0].toJSON()._id).valueOf() 
@@ -105,9 +105,9 @@ test('Delete a message', async () => {
         const messagesContent = messagesNow.map(i => i.toJSON().content)
         //expect the content from the deleted message to not be there
         expect(messagesContent).not.toContain(messageToDelete.content)
-    // }catch (e){
-    //     console.log(e.message)
-    // }    
+    }catch (e){
+        console.log(e.message)
+    }    
 }, 50000);
 
 })
