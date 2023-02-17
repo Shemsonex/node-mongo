@@ -5,9 +5,7 @@ orbs:
 jobs:
   build:
     docker:
-      - image: cimg/node:17.2-browsers   
-    environment: 
-      repo_token: QEN1iuFA7TDydyKWQHtC4HCUvLfIl2AJ4     
+      - image: cimg/node:17.2-browsers       
     steps:
       - checkout
       - browser-tools/install-browser-tools
