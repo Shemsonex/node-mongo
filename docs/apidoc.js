@@ -13,6 +13,10 @@ const options = {
   },
   servers: [
     {
+      url: 'https://node-mongo-production-1d79.up.railway.app',
+      description: "Local server", //  desc.
+    },
+    {
       url: 'http://localhost:8000/',
       description: "Local server", //  desc.
     }
