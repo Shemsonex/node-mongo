@@ -39,13 +39,13 @@ describe('Messages API', () => {
    
     it('Should not send a message if names,email and content fields are empty', async () => {
         try{
-            const newBlog = {
+            const newMessage = {
                 names: '',
                 email: '',
                 content: ''
               };
                      await app.post('/api/messages')
-                         .send(newBlog)
+                         .send(newMessage)
                          .expect(400)                      
         } catch (e) {
             console.log(e.message)
@@ -72,12 +72,12 @@ it('Should not send a new message if it already exists', async () => {
 
 it('Should update an existing message', async () => {
     try{
-        const updatedBlog = {
+        const updatedMessage = {
         title: 'Notepad',
         content: 'cool codes 2',
     };
             await app.put('/api/messages/63ef1f12bfe3a913812acdcc')
-            .send(updatedBlog)
+            .send(updatedMessage)
             .expect(403)
             .end((err, res) => {
             expect(res.body).to.have.property('message', "Message updated successfully");
