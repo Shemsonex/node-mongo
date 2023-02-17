@@ -15,7 +15,7 @@ jobs:
           command: node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage --verbose --runInBand --forceExit
       - run: # run code coverage report
           name: code-coverage
-          command: npm run coveralls
+          # command: npm run coveralls
       - run: # run build
           name: Build
           command: npm run build
