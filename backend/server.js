@@ -9,10 +9,22 @@ import request from 'supertest'
 import userRoutes from "./routes/userRoutes.js";
 import blogRoutes from "./routes/blogRoutes.js";
 import messageRoutes from "./routes/messageRoutes.js";
+import swaggerUi from "swagger-ui-express";
+import swaggerJsdoc from "swagger-jsdoc";
+import cors from "cors";
+import options from "../docs/apidoc.js";
 
 dotenv.config()
 connectDB()
 const app = express();
+
+const specs = swaggerJsdoc(options);
+
+app.use(
+    "/apidocs",
+    swaggerUi.serve,
+    swaggerUi.setup(specs, { explorer: true })
+);
 
 //app.use(bodyParser.json())
 app.use(express.json())
@@ -22,7 +34,7 @@ app.use("/api/blogs", blogRoutes);
 app.use("/api/messages", messageRoutes);
 
 app.use(errorHandler)
-
+app.use(cors())
 app.listen(port, () => console.log(`Server started on port ${port}`));
 
 export default app

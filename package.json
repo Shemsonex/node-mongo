@@ -7,7 +7,7 @@
   "scripts": {
     "start": "node backend/server.js",
     "server": "nodemon backend/server.js",
-    "dev": "nodemon server.js",
+    "dev": "nodemon backend/server.js",
     "test": "nyc node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage --verbose --runInBand --forceExit",
     "coverage": "nyc npm run test",
     "coveralls": "nyc report --reporter=text-lcov | coveralls"
@@ -34,12 +34,16 @@
     "bcrypt": "^5.1.0",
     "cloudinary": "^1.33.0",
     "colors": "^1.4.0",
+    "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "express-async-handler": "^1.2.0",
     "joi": "^17.7.0",
     "jsonwebtoken": "^9.0.0",
     "mongoose": "^6.9.0",
-    "path": "^0.12.7"
+    "path": "^0.12.7",
+    "swagger": "^0.7.5",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^4.6.0"
   }
 }
