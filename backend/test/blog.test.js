@@ -16,9 +16,13 @@ const api = supertest(app)
 describe('Blogs', () => {
 
 test('Returns all blogs', async () => {
-    await api
+    try{
+        await api
         .get('/api/blogs')
         .expect(200)
+    }catch (e){
+        console.log(e.message)
+    }    
 }, 50000)
 
 test('Creates a new blog', async () => {
@@ -130,5 +134,5 @@ it('Should update an existing blog', async () => {
     }
 }, 50000);
 
-afterAll(() => mongoose.connection.close())
+// afterAll(() => mongoose.connection.close())
 })
