@@ -1,23 +1,23 @@
 version: 2.1
 orbs:
   browser-tools: circleci/browser-tools@1.2.3
-  coveralls: coveralls/coveralls@1.0.6 # coveralls orb
+  #coveralls: coveralls/coveralls@1.0.6 # coveralls orb
 jobs:
   build:
     docker:
       - image: cimg/node:17.2-browsers   
     environment: 
-      repo_token: inSaS9aQzb4fZPoWSSes2bCrCnXI4nB4f     
+      repo_token: QEN1iuFA7TDydyKWQHtC4HCUvLfIl2AJ4     
     steps:
       - checkout
       - browser-tools/install-browser-tools
       - run: npm install
       - run:
           name: "Run Jest and Collect Coverage Reports"
-          command: node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage --verbose --runInBand --forceExit
+          command: nyc node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage --verbose --runInBand --forceExit
       - run: # run code coverage report
         name: code-coverage
-        command: npm run coveralls
+        command: nyc npm run coveralls
       - run: # run build
         name: Build
         command: npm run build
