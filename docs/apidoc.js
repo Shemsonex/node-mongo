@@ -13,7 +13,7 @@ const options = {
   },
   servers: [
     {
-      url: 'https://node-mongo-production-1d79.up.railway.app',
+      url: 'https://node-mongo-production-1d79.up.railway.app/apidocs',
       description: "Local server", //  desc.
     },
     {

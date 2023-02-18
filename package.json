@@ -8,12 +8,14 @@
     "start": "babel-node server.js",
     "server": "nodemon backend/server.js",
     "dev": "nodemon node_modules/.bin/babel-node backend/server.js",
-    "test": "cross-env jest --coverage"
+    "test": "cross-env jest --coverage",
+    "coveralls": "report --reporter=text-lcov | coveralls"
   },
   "author": "Shema Aime Bayijahe",
   "license": "MIT",
   "devDependencies": {
     "@babel/core": "^7.20.12",
+    "@babel/plugin-transform-runtime": "^7.19.6",
     "@babel/preset-env": "^7.20.2",
     "babel-install": "2.1.0",
     "chai": "^4.3.7",
