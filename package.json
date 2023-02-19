@@ -10,7 +10,7 @@
     "dev": "nodemon backend/server.js",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage --verbose --runInBand --forceExit",
     "coverage": "npm run test",
-    "coveralls": "report --reporter=text-lcov | coveralls"
+    "coveralls": "nyc report --reporter=text-lcov | coveralls"
   },
   "author": "Shema Aime Bayijahe",
   "license": "MIT",
