@@ -5,17 +5,17 @@
   "type": "module",
   "main": "server.js",
   "scripts": {
-    "start": "babel-node server.js",
+    "start": "node backend/server.js",
     "server": "nodemon backend/server.js",
-    "dev": "nodemon node_modules/.bin/babel-node backend/server.js",
-    "test": "cross-env jest --coverage",
+    "dev": "nodemon backend/server.js",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage --verbose --runInBand --forceExit",
+    "coverage": "npm run test",
     "coveralls": "report --reporter=text-lcov | coveralls"
   },
   "author": "Shema Aime Bayijahe",
   "license": "MIT",
   "devDependencies": {
     "@babel/core": "^7.20.12",
-    "@babel/plugin-transform-runtime": "^7.19.6",
     "@babel/preset-env": "^7.20.2",
     "babel-install": "2.1.0",
     "chai": "^4.3.7",
