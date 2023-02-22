@@ -96,7 +96,7 @@ const getBlogs = asyncHandler(async (req, res) => {
 
 //Set Blog
 const setBlog = asyncHandler(async (req, res) => {
-  //console.log(req.body);
+  // console.log(req.body);
     if(!req.body.title || !req.body.content ){
           res.status(400)
           //res.send(req.body.title)
