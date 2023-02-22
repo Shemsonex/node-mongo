@@ -4,9 +4,9 @@ import {Message,validateMessage} from '../models/messageModel.js'
 
 //Get Single message
 const getMessage = asyncHandler(async (req, res) => {
-  if(req.userRole !== 'admin' && req.userId !== req.params.id){
-    res.status(403).json({error : "Unauthorised access. You can only fetch your own message."});
-  }
+  // if(req.userRole !== 'admin' && req.userId !== req.params.id){
+  //   res.status(403).json({error : "Unauthorised access. You can only fetch your own message."});
+  // }
   try {
 		const message = await Message.findOne({ _id: req.params.id })
 		res.json(message)
@@ -18,9 +18,9 @@ const getMessage = asyncHandler(async (req, res) => {
 
 //Get messages
 const getMessages = asyncHandler(async (req, res) => {
-  if(req.userRole !== 'admin'){
-    res.status(403).json({error : 'Unauthorised access. Reserved for admins'});
-  }
+  // if(req.userRole !== 'admin'){
+  //   res.status(403).json({error : 'Unauthorised access. Reserved for admins'});
+  // }
   const messages = await Message.find()
   res.status(200).json(messages);
 });
@@ -43,9 +43,9 @@ const setMessage = asyncHandler(async (req, res) => {
 });
 //Update message
 const updateMessage = asyncHandler(async (req, res) => {
-  if(req.userRole !== 'admin' && req.userId !== req.params.id){
-    res.status(401).json({error : "Unauthorised access. You can only update your own message."});
-  }
+  // if(req.userRole !== 'admin' && req.userId !== req.params.id){
+  //   res.status(401).json({error : "Unauthorised access. You can only update your own message."});
+  // }
   const message = await Message.findById(req.params.id)
 
   if(!message){
@@ -59,9 +59,9 @@ const updateMessage = asyncHandler(async (req, res) => {
 });
 //Delete Single message
 const deleteMessage = asyncHandler(async (req, res) => {
-  if(req.userRole !== 'admin' && req.userId !== req.params.id){
-    res.status(403).json({error : "Unauthorised access. You can only delete your own message."});
-  }
+  // if(req.userRole !== 'admin' && req.userId !== req.params.id){
+  //   res.status(403).json({error : "Unauthorised access. You can only delete your own message."});
+  // }
   const message = await Message.findById(req.params.id)
 
   if(!message){
